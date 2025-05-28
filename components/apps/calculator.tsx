@@ -26,7 +26,7 @@ export function Calculator() {
       const currentValue = previousValue || 0
       const newValue = calculate(currentValue, inputValue, operation)
 
-      setDisplay(String(newValue))
+      setDisplay(formatResult(newValue))
       setPreviousValue(newValue)
     }
 
@@ -51,12 +51,51 @@ export function Calculator() {
     }
   }
 
+  const formatResult = (value: number) => {
+    // Handle very large or very small numbers
+    if (Math.abs(value) >= 1e9 || (Math.abs(value) < 1e-6 && value !== 0)) {
+      return value.toExponential(3)
+    }
+
+    // Convert to string and handle decimal places
+    let result = value.toString()
+
+    // If the result is a whole number but came from decimal operations,
+    // check if we should add decimal places
+    if (Number.isInteger(value) && Math.abs(value) < 1e6) {
+      // For integers less than 1 million, show as integer
+      return result
+    }
+
+    // For decimal numbers, limit to reasonable decimal places
+    if (result.includes(".")) {
+      // Remove trailing zeros but keep at least one decimal place if it was a decimal operation
+      const parts = result.split(".")
+      if (parts[1]) {
+        // Keep up to 8 decimal places and remove trailing zeros
+        const decimals = parts[1].substring(0, 8).replace(/0+$/, "")
+        if (decimals.length > 0) {
+          result = parts[0] + "." + decimals
+        } else {
+          result = parts[0]
+        }
+      }
+    }
+
+    // Add thousand separators for large numbers
+    if (Math.abs(value) >= 1000 && Number.isInteger(value)) {
+      result = value.toLocaleString("en-US")
+    }
+
+    return result
+  }
+
   const performCalculation = () => {
     const inputValue = Number.parseFloat(display)
 
     if (previousValue !== null && operation) {
       const newValue = calculate(previousValue, inputValue, operation)
-      setDisplay(String(newValue))
+      setDisplay(formatResult(newValue))
       setPreviousValue(null)
       setOperation(null)
       setWaitingForOperand(true)
@@ -78,7 +117,8 @@ export function Calculator() {
 
   const inputPercent = () => {
     const value = Number.parseFloat(display)
-    setDisplay(String(value / 100))
+    const result = value / 100
+    setDisplay(formatResult(result))
   }
 
   const inputDecimal = () => {
@@ -91,8 +131,22 @@ export function Calculator() {
   }
 
   const formatDisplay = (value: string) => {
-    if (value.length > 9) {
-      return Number.parseFloat(value).toExponential(3)
+    // Handle display length limit
+    if (value.length > 12) {
+      const num = Number.parseFloat(value)
+      if (Math.abs(num) >= 1e9) {
+        return num.toExponential(3)
+      }
+      // Truncate long decimal numbers
+      if (value.includes(".")) {
+        const parts = value.split(".")
+        const availableDecimals = 12 - parts[0].length - 1
+        if (availableDecimals > 0) {
+          return parts[0] + "." + parts[1].substring(0, availableDecimals)
+        } else {
+          return parts[0]
+        }
+      }
     }
     return value
   }

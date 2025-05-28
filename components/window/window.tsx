@@ -64,6 +64,9 @@ export function Window({
         } else if (windowId === "finder") {
           windowWidth = 1000
           windowHeight = 700
+        } else if (windowId === "flappy-bird") {
+          windowWidth = 500
+          windowHeight = 750
         }
 
         // Center the window
@@ -259,14 +262,14 @@ export function Window({
     }
   }
 
-  const isCalculatorApp = windowId === "calculator"
+  const isCalculatorApp = windowId === "calculator" || windowId === "flappy-bird"
 
   return (
     <div
       ref={windowRef}
-      className={`fixed bg-white shadow-2xl overflow-hidden z-40 transition-all duration-300 ease-out touch-manipulation ${
+      className={`fixed bg-white shadow-2xl overflow-hidden transition-all duration-300 ease-out touch-manipulation ${
         isAnimating ? "opacity-0" : "opacity-100"
-      }`}
+      } ${isMaximized ? "z-60" : "z-40"}`}
       style={getWindowStyle()}
     >
       {/* Resize handles - only show on desktop and not for calculator */}

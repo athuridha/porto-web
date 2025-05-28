@@ -1,25 +1,120 @@
 "use client"
 
-import { Code, Folder } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Code, Folder, Square } from "lucide-react"
 
 interface DockProps {
   onOpenWindow: (section: string) => void
   openWindows: string[]
   onCloseWindow: (section: string) => void
+  maximizedWindows: Set<string>
 }
 
 const dockItems = [
   { id: "finder", label: "Finder", icon: Folder, color: "bg-blue-500" },
   { id: "projects", label: "Projects", icon: Code, color: "bg-green-500" },
+  { id: "flappy-bird", label: "Kotak Loncat", icon: Square, color: "bg-orange-500" },
 ]
 
-export function Dock({ onOpenWindow, openWindows, onCloseWindow }: DockProps) {
+export function Dock({ onOpenWindow, openWindows, onCloseWindow, maximizedWindows }: DockProps) {
+  const [isHovering, setIsHovering] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
+  const dockRef = useRef<HTMLDivElement>(null)
+  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const hideTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Check if any window is maximized
+  const hasMaximizedWindow = maximizedWindows.size > 0
+
+  // Handle mouse movement to detect hover near the dock area
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      // Only activate hover detection when a window is maximized
+      if (!hasMaximizedWindow) return
+
+      const threshold = 50 // pixels from bottom of screen to trigger hover
+      const isNearBottom = window.innerHeight - e.clientY < threshold
+
+      if (isNearBottom) {
+        // Clear any existing hide timer
+        if (hideTimerRef.current) {
+          clearTimeout(hideTimerRef.current)
+          hideTimerRef.current = null
+        }
+
+        // Set hovering state after a small delay to prevent flickering
+        if (!isHovering && !hoverTimerRef.current) {
+          hoverTimerRef.current = setTimeout(() => {
+            setIsHovering(true)
+            hoverTimerRef.current = null
+          }, 100)
+        }
+      } else if (isHovering) {
+        // Clear any existing hover timer
+        if (hoverTimerRef.current) {
+          clearTimeout(hoverTimerRef.current)
+          hoverTimerRef.current = null
+        }
+
+        // Set a timer to hide the dock after mouse leaves
+        if (!hideTimerRef.current) {
+          hideTimerRef.current = setTimeout(() => {
+            setIsHovering(false)
+            hideTimerRef.current = null
+          }, 500) // Longer delay before hiding for better UX
+        }
+      }
+    }
+
+    // Add mouse move listener
+    document.addEventListener("mousemove", handleMouseMove)
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove)
+      // Clear any timers on cleanup
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current)
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+    }
+  }, [isHovering, hasMaximizedWindow])
+
+  // Update visibility based on maximized windows and hover state
+  useEffect(() => {
+    if (hasMaximizedWindow) {
+      // When windows are maximized, visibility depends on hover state
+      setIsVisible(isHovering)
+    } else {
+      // When no windows are maximized, dock is always visible
+      setIsVisible(true)
+    }
+  }, [hasMaximizedWindow, isHovering])
+
   const handleItemClick = (itemId: string) => {
     onOpenWindow(itemId)
   }
 
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 duration-500">
+    <div
+      ref={dockRef}
+      className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ease-in-out ${
+        isVisible
+          ? "opacity-100 translate-y-0"
+          : hasMaximizedWindow
+            ? "opacity-0 translate-y-16 pointer-events-none"
+            : "opacity-100 translate-y-0"
+      }`}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => {
+        if (hasMaximizedWindow) {
+          // Set a timer to hide the dock after mouse leaves
+          if (!hideTimerRef.current) {
+            hideTimerRef.current = setTimeout(() => {
+              setIsHovering(false)
+              hideTimerRef.current = null
+            }, 500)
+          }
+        }
+      }}
+    >
       <div className="bg-white/20 backdrop-blur-md rounded-2xl p-2 border border-white/30 shadow-2xl">
         <div className="flex items-center justify-center gap-2 md:gap-3">
           {dockItems.map((item, index) => {
