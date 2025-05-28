@@ -18,6 +18,7 @@ import { EducationContent } from "@/components/content/education-content"
 import { ContactContent } from "@/components/content/contact-content"
 import { Calculator } from "@/components/apps/calculator"
 import { Calendar } from "@/components/apps/calendar"
+import { FlappyBird } from "@/components/apps/flappy-bird"
 
 export default function AmaraDesktop() {
   const [isLoading, setIsLoading] = useState(true)
@@ -111,6 +112,8 @@ export default function AmaraDesktop() {
         return "Calculator"
       case "calendar":
         return "Calendar"
+      case "flappy-bird":
+        return "Kotak Loncat"
       default:
         return "Window"
     }
@@ -136,6 +139,8 @@ export default function AmaraDesktop() {
         return <Calculator />
       case "calendar":
         return <Calendar />
+      case "flappy-bird":
+        return <FlappyBird />
       default:
         return <div className="p-8">Content not found</div>
     }
@@ -189,7 +194,12 @@ export default function AmaraDesktop() {
       ))}
 
       {/* Dock */}
-      <Dock onOpenWindow={openWindow} openWindows={openWindows} onCloseWindow={closeWindow} />
+      <Dock
+        onOpenWindow={openWindow}
+        openWindows={openWindows}
+        onCloseWindow={closeWindow}
+        maximizedWindows={maximizedWindows}
+      />
     </DesktopBackground>
   )
 }
