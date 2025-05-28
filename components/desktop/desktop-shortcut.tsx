@@ -19,7 +19,7 @@ export function DesktopShortcut({ onDoubleClick }: DesktopShortcutProps) {
   }
 
   return (
-    <div className="absolute top-32 left-4 md:left-8 animate-in fade-in duration-500 delay-1000">
+    <div className="absolute top-8 left-4 md:left-8 animate-in fade-in duration-500 delay-1000">
       <div
         className="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-all duration-200 group touch-manipulation"
         onDoubleClick={handleClick}

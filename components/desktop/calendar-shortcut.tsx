@@ -19,7 +19,7 @@ export function CalendarShortcut({ onDoubleClick }: CalendarShortcutProps) {
   }
 
   return (
-    <div className="absolute top-60 right-4 md:right-8 animate-in fade-in duration-500 delay-1400">
+    <div className="absolute top-36 right-4 md:right-8 animate-in fade-in duration-500 delay-1400">
       <div
         className="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-all duration-200 group touch-manipulation"
         onDoubleClick={handleClick}

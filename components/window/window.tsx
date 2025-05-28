@@ -30,7 +30,7 @@ export function Window({
   sidebar,
   windowId,
 }: WindowProps) {
-  const [position, setPosition] = useState({ x: 100 + Math.random() * 200, y: 100 + Math.random() * 100 })
+  const [position, setPosition] = useState({ x: 0, y: 0 })
   const [size, setSize] = useState({ width: 900, height: 600 })
   const [isDragging, setIsDragging] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
@@ -40,29 +40,54 @@ export function Window({
   const [isMobile, setIsMobile] = useState(false)
   const windowRef = useRef<HTMLDivElement>(null)
 
-  // Check for mobile device
+  // Check for mobile device and set initial size/position
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+      const mobile = window.innerWidth < 768
+      setIsMobile(mobile)
+
+      // Set responsive size and center position
+      if (mobile) {
+        setSize({ width: window.innerWidth - 20, height: window.innerHeight - 120 })
+        setPosition({ x: 10, y: 30 })
+      } else {
+        // Desktop sizing based on window type
+        let windowWidth = 900
+        let windowHeight = 600
+
+        if (windowId === "calculator") {
+          windowWidth = 400
+          windowHeight = 500
+        } else if (windowId === "calendar") {
+          windowWidth = 800
+          windowHeight = 600
+        } else if (windowId === "finder") {
+          windowWidth = 1000
+          windowHeight = 700
+        }
+
+        // Center the window
+        const centerX = (window.innerWidth - windowWidth) / 2
+        const centerY = (window.innerHeight - windowHeight) / 2
+
+        setSize({ width: windowWidth, height: windowHeight })
+        setPosition({
+          x: Math.max(0, centerX),
+          y: Math.max(24, centerY), // Account for menu bar
+        })
+      }
     }
 
     checkMobile()
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
-  }, [])
+  }, [windowId])
 
   // Animation on mount
   useEffect(() => {
     const timer = setTimeout(() => setIsAnimating(false), 300)
     return () => clearTimeout(timer)
   }, [])
-
-  // Special sizing for calculator
-  useEffect(() => {
-    if (windowId === "calculator") {
-      setSize({ width: 400, height: 500 })
-    }
-  }, [windowId])
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (isMaximized || isMobile) return
@@ -212,10 +237,10 @@ export function Window({
     // Mobile-first responsive sizing
     if (isMobile) {
       return {
-        top: 30, // Account for menu bar + some padding
-        left: 10,
-        width: "calc(100vw - 20px)",
-        height: "calc(100vh - 120px)", // Account for menu bar and dock
+        top: position.y,
+        left: position.x,
+        width: `${size.width}px`,
+        height: `${size.height}px`,
         transform: isAnimating ? "scale(0.95)" : "scale(1)",
         borderRadius: "12px",
       }
