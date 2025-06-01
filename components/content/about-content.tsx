@@ -34,15 +34,7 @@ export function AboutContent() {
 
           {/* Contact Info */}
           <div className="space-y-3 animate-in slide-in-from-right duration-500 delay-400">
-            <div className="flex items-center gap-4">
-              <span className="text-gray-500 w-20">Instagram</span>
-              <span
-                className="text-gray-800 cursor-pointer hover:text-blue-600 transition-colors"
-                onClick={() => handleLinkClick("https://instagram.com/athuridha")}
-              >
-                @athuridha
-              </span>
-            </div>
+
             <div className="flex items-center gap-4">
               <span className="text-gray-500 w-20">Email</span>
               <span

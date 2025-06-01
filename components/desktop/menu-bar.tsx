@@ -516,9 +516,6 @@ export function MenuBar({ onOpenFinder }: MenuBarProps) {
                       {locationError && (
                         <div className="text-xs text-yellow-600 text-center mt-1">Using default location</div>
                       )}
-                      <div className="text-xs text-gray-400 text-center mt-1">
-                        *Simulated weather data based on location
-                      </div>
                     </div>
                   </>
                 )}
