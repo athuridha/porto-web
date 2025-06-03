@@ -43,9 +43,10 @@ export const projects = [
     name: "Samudra Kreatif - Agency Frontend",
     description:
       "Frontend website for Samudra Kreatif agency, providing a modern and responsive interface for digital agency services.",
-    image: "/images/5.jpg", 
+    image: "/images/wp.jpg",
     technologies: ["Next.js", "React", "Tailwind CSS"],
     github: "https://github.com/athuridha/samudra-kreatif",
+    liveDemo: "https://samudra-kreatif.vercel.app/",
   },
 ]
 
