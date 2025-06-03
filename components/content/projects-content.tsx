@@ -31,6 +31,14 @@ export const projects = [
     github: "https://github.com/athuridha/MidExam-College",
     liveDemo: "https://athuridha.github.io/MidExam-College/",
   },
+  {
+    name: "WebApp WhatsApp Blast",
+    description:
+      "A web-based WhatsApp blast application with admin dashboard, contact management, and message history. Built for efficient bulk messaging.",
+    image: "/images/4.png",
+    technologies: ["React", "Node.js", "Express", "Sqlite"],
+    github: "https://github.com/athuridha/webapp-whatsapp-blast",
+  },
 ]
 
 export function ProjectsContent({ onProjectClick }: ProjectsContentProps) {
