@@ -39,6 +39,14 @@ export const projects = [
     technologies: ["React", "Node.js", "Express", "Sqlite"],
     github: "https://github.com/athuridha/webapp-whatsapp-blast",
   },
+  {
+    name: "Samudra Kreatif - Agency Frontend",
+    description:
+      "Frontend website for Samudra Kreatif agency, providing a modern and responsive interface for digital agency services.",
+    image: "/images/5.jpg", 
+    technologies: ["Next.js", "React", "Tailwind CSS"],
+    github: "https://github.com/athuridha/samudra-kreatif",
+  },
 ]
 
 export function ProjectsContent({ onProjectClick }: ProjectsContentProps) {
